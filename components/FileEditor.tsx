@@ -1,34 +1,43 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Textarea } from '@/components/ui/textarea';
-import { Badge } from '@/components/ui/badge';
-import { Save, Undo2, Redo2, Type, Code, FileText, AlertCircle } from 'lucide-react';
-import { useFileStore } from '@/store/fileStore';
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Textarea } from "@/components/ui/textarea";
+import { Badge } from "@/components/ui/badge";
+import {
+  Save,
+  Undo2,
+  Redo2,
+  Type,
+  Code,
+  FileText,
+  AlertCircle,
+} from "lucide-react";
+import { useFileStore } from "@/store/fileStore";
+import { cn } from "@/lib/utils";
 
 interface FileEditorProps {
   file: any;
 }
 
 export function FileEditor({ file }: FileEditorProps) {
-  const [content, setContent] = useState(file?.content || '');
+  const [content, setContent] = useState(file?.content || "");
   const [hasChanges, setHasChanges] = useState(false);
   const [isCodeMode, setIsCodeMode] = useState(false);
   const [lineCount, setLineCount] = useState(0);
   const { updateFile } = useFileStore();
 
   useEffect(() => {
-    setContent(file?.content || '');
+    setContent(file?.content || "");
     setHasChanges(false);
-    setLineCount(file?.content?.split('\n').length || 0);
+    setLineCount(file?.content?.split("\n").length || 0);
   }, [file]);
 
   const handleContentChange = (newContent: string) => {
     setContent(newContent);
     setHasChanges(newContent !== file?.content);
-    setLineCount(newContent.split('\n').length);
+    setLineCount(newContent.split("\n").length);
   };
 
   const handleSave = () => {
@@ -37,12 +46,14 @@ export function FileEditor({ file }: FileEditorProps) {
   };
 
   const handleUndo = () => {
-    setContent(file?.content || '');
+    setContent(file?.content || "");
     setHasChanges(false);
-    setLineCount(file?.content?.split('\n').length || 0);
+    setLineCount(file?.content?.split("\n").length || 0);
   };
 
-  const isTextFile = file?.type === 'text' || file?.name.match(/\.(txt|md|js|ts|jsx|tsx|html|css|json)$/i);
+  const isTextFile =
+    file?.type === "text" ||
+    file?.name.match(/\.(txt|md|js|ts|jsx|tsx|html|css|json)$/i);
 
   if (!isTextFile) {
     return (
@@ -52,9 +63,16 @@ export function FileEditor({ file }: FileEditorProps) {
             <div className="w-24 h-24 bg-orange-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
               <AlertCircle className="h-12 w-12 text-orange-600" />
             </div>
-            <h3 className="text-xl font-semibold text-slate-700 mb-2">Cannot Edit This File</h3>
-            <p className="text-slate-500 mb-4">Only text and code files can be edited inline</p>
-            <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200">
+            <h3 className="text-xl font-semibold text-slate-700 mb-2">
+              Cannot Edit This File
+            </h3>
+            <p className="text-slate-500 mb-4">
+              Only text and code files can be edited inline
+            </p>
+            <Badge
+              variant="outline"
+              className="bg-orange-50 text-orange-700 border-orange-200"
+            >
               {file?.type} file
             </Badge>
           </div>
@@ -76,7 +94,10 @@ export function FileEditor({ file }: FileEditorProps) {
               {lineCount} lines
             </Badge>
             {hasChanges && (
-              <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200">
+              <Badge
+                variant="outline"
+                className="bg-orange-50 text-orange-700 border-orange-200"
+              >
                 Unsaved changes
               </Badge>
             )}
@@ -86,8 +107,12 @@ export function FileEditor({ file }: FileEditorProps) {
               onClick={() => setIsCodeMode(!isCodeMode)}
               className="hover:bg-blue-50"
             >
-              {isCodeMode ? <Type className="h-4 w-4 mr-2" /> : <Code className="h-4 w-4 mr-2" />}
-              {isCodeMode ? 'Text Mode' : 'Code Mode'}
+              {isCodeMode ? (
+                <Type className="h-4 w-4 mr-2" />
+              ) : (
+                <Code className="h-4 w-4 mr-2" />
+              )}
+              {isCodeMode ? "Text Mode" : "Code Mode"}
             </Button>
             <Button
               variant="outline"
@@ -117,15 +142,18 @@ export function FileEditor({ file }: FileEditorProps) {
             onChange={(e) => handleContentChange(e.target.value)}
             className={cn(
               "h-full resize-none border-0 focus:ring-0 rounded-none",
-              isCodeMode 
-                ? "font-mono text-sm leading-relaxed bg-slate-50" 
+              isCodeMode
+                ? "font-mono text-sm leading-relaxed bg-slate-50"
                 : "font-sans leading-relaxed bg-white"
             )}
             placeholder="Start typing your content here..."
           />
           {isCodeMode && (
             <div className="absolute top-4 right-4">
-              <Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-200">
+              <Badge
+                variant="outline"
+                className="bg-purple-50 text-purple-700 border-purple-200"
+              >
                 <Code className="h-3 w-3 mr-1" />
                 Code Mode
               </Badge>
@@ -135,8 +163,4 @@ export function FileEditor({ file }: FileEditorProps) {
       </CardContent>
     </Card>
   );
-}
-
-function cn(...classes: string[]) {
-  return classes.filter(Boolean).join(' ');
 }
